@@ -1,0 +1,13 @@
+REM puts you into powershell and powers off computer.
+REM windows 10+
+REM public 
+REM opens run
+GUI r
+DELAY 500
+REM opens powershell
+STRING powershell
+ENTER 
+DELAY 1500  
+REM shuts down device immediately
+STRING SHUTDOWN /S 
+ENTER
