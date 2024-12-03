@@ -1,0 +1,32 @@
+Set objShell = CreateObject("WScript.Shell")
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+
+' Change this to the drive letter of your USB
+usbDrive = "D:\"
+
+' Create/Open the file to save WiFi passwords
+Set objFile = objFSO.CreateTextFile(usbDrive & "WiFi_Passwords.txt", True)
+
+' Get the list of WiFi profiles
+Set objExec = objShell.Exec("netsh wlan show profiles")
+Do Until objExec.StdOut.AtEndOfStream
+    strLine = objExec.StdOut.ReadLine()
+    If InStr(strLine, "All User Profile") Then
+        profileName = Split(strLine, ":")(1)
+        profileName = Trim(profileName)
+        
+        ' Get the password for each profile
+        Set objExecProfile = objShell.Exec("netsh wlan show profile name=""" & profileName & """ key=clear")
+        Do Until objExecProfile.StdOut.AtEndOfStream
+            strProfileLine = objExecProfile.StdOut.ReadLine()
+            If InStr(strProfileLine, "Key Content") Then
+                password = Split(strProfileLine, ":")(1)
+                password = Trim(password)
+                objFile.WriteLine("Profile: " & profileName & " Password: " & password)
+            End If
+        Loop
+    End If
+Loop
+
+objFile.Close
+WScript.Echo "WiFi passwords saved to " & usbDrive & "WiFi_Passwords.txt"
