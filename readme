@@ -1,9 +1,17 @@
 This script is intended for educational purpose's only.
 
 //Disclamer only use on devices you own i will not take any resposibility for what you have done as a individual becouse it's illegal and you can get up to 10 years!dont be an skid.
+
+//the vbsopener is for an atmega32u4 usb hid device that will open you script that you pick for you that has been put on a seprate usb and runs it.
+just switch the script destination to your usb and script 
+
 //Copy wifi.txt to an notepad save to an .vbs then change the drive letter in script to your coresponding drive.
 then change the fuckthis.txt to what ever.  
+
 //For the tool.bat copy the code to notepad save it as a bat file then downlaod the passlist.txt
+
 //For the findallcompinfo.vbs just download and its ready.
+
 //realvirus.txt change to .bat then it will spam cmd prompt and crash the device simple but effective.
-//for the rest figure it out im not explaning everything unless you ask me too.
+
+//for the rest figure it out if you truly cant then ask me too.
