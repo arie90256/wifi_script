@@ -2430,7 +2430,7 @@ void setup() {
   Keyboard.releaseAll();
   delay(100);
 
-  // End the keyboard library
+  //maxed amount you can spam unless you use a loop.
   Keyboard.end();
 }
 
