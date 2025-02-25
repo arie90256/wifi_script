@@ -2,7 +2,7 @@ Set objShell = CreateObject("WScript.Shell")
 Set objFSO = CreateObject("Scripting.FileSystemObject")
 
 Dim wifiName
-wifiName = "Rah 5g"
+wifiName = "your wifi"
 Dim notepadFileName
 notepadFileName = "duck.txt"
 
