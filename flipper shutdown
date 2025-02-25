@@ -9,5 +9,5 @@ STRING powershell
 ENTER 
 DELAY 1500  
 REM shuts down device immediately
-STRING SHUTDOWN /S 
+STRING SHUTDOWN /S /T /0
 ENTER
