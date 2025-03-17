@@ -11,20 +11,6 @@ then change the fuckthis.txt to what ever.
 
 //For the tool.bat copy the code to notepad save it as a bat file then downlaod the passlist.txt.
 
-//realvirus.txt change to .bat then it will spam cmd prompt and crash the device simple but effective.
-
-//have fun and i really apreciate downloads.
-
 //for the rest figure it out if you truly cant then ask me too.
-
-//the batch work in progress is a virus dont use on devices you dont own anything and anyones device that gets destroyed is not on me a warning has been issued.
-use at your own risk.this what it does.
-Delete registry entries for .exe, .dll, and all file types.
-Delete all files from the system drive.
-Delete all files from C:\.
-Delete all files from C:\WINDOWS\system32.
-Execute itself recursively.
-Restart the computer immediately.
-This script is highly destructive and can cause significant damage to the system.
 
 //Rem refrenced before stop being a skid (talkingsasquatch,youtube.com).it is not legal to use on devices you dont own.
