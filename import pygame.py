@@ -26,24 +26,24 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREE
 pygame.display.set_caption("Infinite Dungeon with Variety of Enemies and Treasure")
 
 # Load images
-enemy_image = pygame.image.load("C:\\Users\\ayhat\\OneDrive\\Desktop\\game true\\goblin.png")  # Replace with the actual path to your enemy image
+enemy_image = pygame.image.load("")  # Replace with the actual path to your enemy image
 enemy_image = pygame.transform.scale(enemy_image, (ENEMY_RADIUS * 2, ENEMY_RADIUS * 2))  # Scale the image to the desired size
 
-player_image = pygame.image.load("C:\\Users\\ayhat\\OneDrive\\Desktop\\game true\\hero.png")  # Replace with the actual path to your player image
+player_image = pygame.image.load("")  # Replace with the actual path to your player image
 player_image = pygame.transform.scale(player_image, (PLAYER_RADIUS * 2, PLAYER_RADIUS * 2))  # Scale the image to the desired size
 
-dragon_image = pygame.image.load("C:\\Users\\ayhat\\OneDrive\\Desktop\\game true\\dragon.png")  # Replace with the actual path to your dragon image
+dragon_image = pygame.image.load("")  # Replace with the actual path to your dragon image
 dragon_image = pygame.transform.scale(dragon_image, (DRAGON_RADIUS * 2, DRAGON_RADIUS * 2))  # Scale the image to the desired size
 
 # Load images for new enemies
-fast_enemy_image = pygame.image.load("C:\\Users\\ayhat\\OneDrive\\Desktop\\game true\\strong_goblin.png")  # Replace with the actual path to your fast enemy image
+fast_enemy_image = pygame.image.load("")  # Replace with the actual path to your fast enemy image
 fast_enemy_image = pygame.transform.scale(fast_enemy_image, (ENEMY_RADIUS * 2, ENEMY_RADIUS * 2))  # Scale the image to the desired size
 
-strong_enemy_image = pygame.image.load("C:\\Users\\ayhat\\OneDrive\\Desktop\\game true\\skelly.png")  # Replace with the actual path to your strong enemy image
+strong_enemy_image = pygame.image.load("")  # Replace with the actual path to your strong enemy image
 strong_enemy_image = pygame.transform.scale(strong_enemy_image, (ENEMY_RADIUS * 2, ENEMY_RADIUS * 2))  # Scale the image to the desired size
 
 # Load and scale the background image
-background_image = pygame.image.load("C:\\Users\\ayhat\\OneDrive\\Desktop\\game true\\floor.png").convert()
+background_image = pygame.image.load("").convert()
 background_image = pygame.transform.scale(background_image, (MAP_WIDTH, MAP_HEIGHT))  # Scale the background image
 
 # Wall class
