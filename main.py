@@ -10,15 +10,15 @@ pygame.init()
 # Constants
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-MAP_WIDTH = 2000
-MAP_HEIGHT = 1500
+MAP_WIDTH = 3000  # Adjusted map width
+MAP_HEIGHT = 2000  # Adjusted map height
 FPS = 60
 BOMB_RADIUS = 30
 ENEMY_RADIUS = 10
 PLAYER_RADIUS = 25
 WALL_COLOR = (139, 69, 19)  # Brown color for walls
 DOOR_COLOR = (150, 75, 0)
-NUM_MAPS = 3
+NUM_MAPS = 10  # Updated number of maps
 
 # Set up the display
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
@@ -55,17 +55,28 @@ class Player:
         self.loot = []
         self.sword_active = False
         self.weapon = 'bullet'  # Start with bullet as the primary weapon
+        self.direction = (0, 0)  # Add direction attribute
 
     def move(self, keys, walls, doors):
         original_position = self.rect.copy()
+        direction_x, direction_y = 0, 0
         if keys[pygame.K_a]:
             self.rect.x -= self.speed
+            direction_x = -1
         if keys[pygame.K_d]:
             self.rect.x += self.speed
+            direction_x = 1
         if keys[pygame.K_w]:
             self.rect.y -= self.speed
+            direction_y = -1
         if keys[pygame.K_s]:
             self.rect.y += self.speed
+            direction_y = 1
+
+        # Normalize direction vector
+        if direction_x != 0 or direction_y != 0:
+            length = math.hypot(direction_x, direction_y)
+            self.direction = (direction_x / length, direction_y / length)
 
         for wall in walls:
             if self.rect.colliderect(wall.rect):
@@ -86,14 +97,22 @@ class Player:
     def switch_weapon(self):
         if self.weapon == 'bullet':
             self.weapon = 'sword'
+        elif self.weapon == 'sword':
+            self.weapon = 'black_hole'
         else:
             self.weapon = 'bullet'
 
     def draw(self, surface, camera):
         pygame.draw.circle(surface, self.color, camera.apply_pos(self.rect.center), PLAYER_RADIUS)
         if self.sword_active and self.weapon == 'sword':
-            sword_rect = pygame.Rect(self.rect.centerx, self.rect.centery, 100, 10)
+            sword_length = 40
+            sword_width = 10
+            sword_x = self.rect.centerx + self.direction[0] * sword_length
+            sword_y = self.rect.centery + self.direction[1] * sword_length
+            sword_rect = pygame.Rect(sword_x, sword_y, sword_length, sword_width)
             pygame.draw.rect(surface, (255, 255, 255), camera.apply(sword_rect))
+        elif self.weapon == 'black_hole':
+            pygame.draw.circle(surface, (0, 0, 0), camera.apply_pos(self.rect.center), 50)
 
 # Bullet class
 class Bullet:
@@ -109,6 +128,32 @@ class Bullet:
 
     def draw(self, surface, camera):
         pygame.draw.rect(surface, self.color, camera.apply(self.rect))
+
+# Black Hole class
+class BlackHole:
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x - 50, y - 50, 100, 100)
+        self.color = (0, 0, 0)
+        self.active = True
+        self.creation_time = time.time()
+
+    def update(self, enemies):
+        if time.time() - self.creation_time > 5:  # Black hole lasts for 5 seconds
+            self.active = False
+        if self.active:
+            for enemy in enemies:
+                direction_x = self.rect.centerx - enemy.rect.centerx
+                direction_y = self.rect.centery - enemy.rect.centery
+                distance = math.hypot(direction_x, direction_y)
+                if distance > 0:
+                    direction_x /= distance
+                    direction_y /= distance
+                enemy.rect.x += direction_x * 5
+                enemy.rect.y += direction_y * 5
+
+    def draw(self, surface, camera):
+        if self.active:
+            pygame.draw.circle(surface, self.color, camera.apply_pos(self.rect.center), 50)
 
 # Base Enemy class
 class Enemy:
@@ -224,33 +269,18 @@ class Camera:
         self.camera = pygame.Rect(x, y, self.width, self.height)
 
 # Function to generate a dungeon map with walls and doors
-def generate_maze():
+def generate_maze(structure):
     walls = []
     doors = []
 
-    # Define maze structure
-    maze_structure = [
-        "######################",
-        "#          #   #     #",
-        "#### #######      ####",
-        "#             ###    #",
-        "# ####### ##         #",
-        "#        ###     #####",
-        "## ######  ####      #",
-        "#         ##     #####",
-        "# #############      #",
-        "#               #    #",
-        "################### ##"
-    ]
-
-    for y, row in enumerate(maze_structure):
+    for y, row in enumerate(structure):
         for x, cell in enumerate(row):
             if cell == "#":
                 walls.append(Wall(x * 100, y * 100, 100, 100))
             elif cell == " ":
                 if (x > 0 and row[x - 1] == "#") or (x < len(row) - 1 and row[x + 1] == "#"):
                     doors.append(Door(x * 100, y * 100, 100, 20))
-                if (y > 0 and maze_structure[y - 1][x] == "#") or (y < len(maze_structure) - 1 and maze_structure[y + 1][x] == "#"):
+                if (y > 0 and structure[y - 1][x] == "#") or (y < len(structure) - 1 and structure[y + 1][x] == "#"):
                     doors.append(Door(x * 100, y * 100, 20, 100))
 
     return walls, doors
@@ -278,7 +308,122 @@ def generate_starting_area():
 # Function to transition to the next map
 def transition_to_next_map(current_map_index, player, enemy_positions):
     new_map_index = (current_map_index + 1) % NUM_MAPS
-    walls, doors = generate_maze()
+    structures = [
+        [
+            "######################",
+            "#          #   #     #",
+            "#### #######      ####",
+            "#             ###    #",
+            "# ####### ##         #",
+            "#        ###     #####",
+            "## ######  ####      #",
+            "#         ##     #####",
+            "# #############      #",
+            "#               #    #",
+            "################### ##"
+        ],
+        [
+            "######################",
+            "#     #              #",
+            "####  #######  #######",
+            "#                    #",
+            "###  ############### #",
+            "#                    #",
+            "##################### #",
+            "#                    #",
+            "#######################",
+        ],
+        [
+            "######################",
+            "#######          #####",
+            "#       #######      #",
+            "#       #            #",
+            "#       #######      #",
+            "#             #      #",
+            "#       #######      #",
+            "#       #            #",
+            "#       #######      #",
+            "######################",
+        ],
+        [
+            "######################",
+            "#         #          #",
+            "# ############### ####",
+            "#                    #",
+            "####### ########### ##",
+            "#                    #",
+            "########### ######## #",
+            "#                    #",
+            "######################",
+        ],
+        [
+            "######################",
+            "#                    #",
+            "# ################### #",
+            "#                    #",
+            "####### ############ #",
+            "#                    #",
+            "# ################### #",
+            "#                    #",
+            "######################",
+        ],
+        [
+            "######################",
+            "#                    #",
+            "#### ####### #########",
+            "#                    #",
+            "# ####### ####### ####",
+            "#                    #",
+            "### ### ## ###########",
+            "#                    #",
+            "######################",
+        ],
+        [
+            "######################",
+            "#                    #",
+            "####### ###### #######",
+            "#                    #",
+            "# ### ###### #########",
+            "#                    #",
+            "### ######### ####### ",
+            "#                    #",
+            "######################",
+        ],
+        [
+            "######################",
+            "#                    #",
+            "##### ##### ###### ###",
+            "#                    #",
+            "### ####### ##########",
+            "#                    #",
+            "##### ###### #########",
+            "#                    #",
+            "######################",
+        ],
+        [
+            "######################",
+            "#                    #",
+            "# ###### ######## ####",
+            "#                    #",
+            "### ##### ######## ###",
+            "#                    #",
+            "###### ###############",
+            "#                    #",
+            "######################",
+        ],
+        [
+            "######################",
+            "#                    #",
+            "# ###### ######## ####",
+            "#                    #",
+            "### ##### ######## ###",
+            "#                    #",
+            "###### ###############",
+            "#                    #",
+            "######################",
+        ]
+    ]
+    walls, doors = generate_maze(structures[new_map_index])
     player.rect.topleft = (150, 150)
     enemies = [random.choice([Enemy(x, y), FastEnemy(x, y), StrongEnemy(x, y)]) for x, y in enemy_positions]
     loot_items = [Loot(random.randint(100, MAP_WIDTH - 100), random.randint(100, MAP_HEIGHT - 100), random.choice(['gold', 'silver', 'health_potion'])) for _ in range(5)]
@@ -297,7 +442,7 @@ def show_start_menu(selected_option):
         color = (255, 255, 255) if i != selected_option else (0, 255, 0)
         option_text = font.render(option, True, color)
         screen.blit(option_text, (SCREEN_WIDTH // 2 - option_text.get_width() // 2, SCREEN_HEIGHT // 2 - 100 + i * 50))
-    
+
     pygame.display.flip()
 
 # Starting points for player and enemies
@@ -316,6 +461,7 @@ selected_option = 0
 # Create instances
 player = None
 bullets = []
+black_holes = []
 current_map_index = 0
 walls, doors = generate_starting_area()  # Use the new starting area
 enemies = [random.choice([Enemy(x, y), FastEnemy(x, y), StrongEnemy(x, y)]) for x, y in enemy_start_positions]
@@ -361,15 +507,14 @@ while running:
         keys = pygame.key.get_pressed()
         player.move(keys, walls, doors)
 
-        if shoot_cooldown > 1:
+        if shoot_cooldown > 0:
             shoot_cooldown -= 1
 
-        if pygame.mouse.get_pressed()[0] and shoot_cooldown == 1 and player.weapon == 'bullet':
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-            angle = math.atan2(mouse_y - player.rect.centery, mouse_x - player.rect.centerx)
+        if pygame.mouse.get_pressed()[0] and shoot_cooldown == 0 and player.weapon == 'bullet':
+            angle = math.atan2(player.direction[1], player.direction[0])
             bullet = Bullet(player.rect.centerx, player.rect.centery, angle)
             bullets.append(bullet)
-            shoot_cooldown = 20
+            shoot_cooldown = 10
 
         for bullet in bullets[:]:
             bullet.update()
