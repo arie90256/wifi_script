@@ -25,7 +25,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREE
 pygame.display.set_caption("Infinite Dungeon with Variety of Enemies and Treasure")
 
 # Load enemy image
-enemy_image = pygame.image.load("C:/Users/ayhat/OneDrive/Desktop/game true/images/goblin.png")  # Replace with the actual path to your enemy image
+enemy_image = pygame.image.load("yourpath")  # Replace with the actual path to your enemy image
 enemy_image = pygame.transform.scale(enemy_image, (ENEMY_RADIUS * 2, ENEMY_RADIUS * 2))  # Scale the image to the desired size
 
 # Wall class
