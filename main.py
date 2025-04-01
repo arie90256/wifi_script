@@ -14,7 +14,7 @@ MAP_WIDTH = 3000  # Adjusted map width
 MAP_HEIGHT = 2000  # Adjusted map height
 FPS = 60
 BOMB_RADIUS = 30
-ENEMY_RADIUS = 10
+ENEMY_RADIUS = 20  # Updated to better fit the image size
 PLAYER_RADIUS = 25
 WALL_COLOR = (139, 69, 19)  # Brown color for walls
 DOOR_COLOR = (150, 75, 0)
@@ -23,6 +23,10 @@ NUM_MAPS = 10  # Updated number of maps
 # Set up the display
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("Infinite Dungeon with Variety of Enemies and Treasure")
+
+# Load enemy image
+enemy_image = pygame.image.load("C:/Users/ayhat/OneDrive/Desktop/game true/images/goblin.png")  # Replace with the actual path to your enemy image
+enemy_image = pygame.transform.scale(enemy_image, (ENEMY_RADIUS * 2, ENEMY_RADIUS * 2))  # Scale the image to the desired size
 
 # Wall class
 class Wall:
@@ -133,7 +137,7 @@ class Bullet:
 class BlackHole:
     def __init__(self, x, y):
         self.rect = pygame.Rect(x - 50, y - 50, 100, 100)
-        self.color = (0, 0, 0)
+        self.color = (0, 0, 255)  # Changed to blue color
         self.active = True
         self.creation_time = time.time()
 
@@ -159,7 +163,7 @@ class BlackHole:
 class Enemy:
     def __init__(self, x, y):
         self.rect = pygame.Rect(x, y, ENEMY_RADIUS * 2, ENEMY_RADIUS * 2)
-        self.color = (255, 0, 0)
+        self.image = enemy_image
         self.speed = 1
         self.target = None
         self.loot = random.choice(['gold', 'silver', 'health_potion'])
@@ -197,20 +201,18 @@ class Enemy:
             self.rect.y -= direction_y * self.speed
 
     def draw(self, surface, camera):
-        pygame.draw.circle(surface, self.color, camera.apply_pos(self.rect.center), ENEMY_RADIUS)
+        surface.blit(self.image, camera.apply(self.rect))
 
 # Derived enemy classes
 class FastEnemy(Enemy):
     def __init__(self, x, y):
         super().__init__(x, y)
         self.speed = 2
-        self.color = (0, 0, 255)
 
 class StrongEnemy(Enemy):
     def __init__(self, x, y):
         super().__init__(x, y)
         self.health = 100
-        self.color = (0, 255, 0)
 
 # Loot class to represent loot items
 class Loot:
@@ -329,9 +331,9 @@ def transition_to_next_map(current_map_index, player, enemy_positions):
             "#                    #",
             "###  ############### #",
             "#                    #",
-            "##################### #",
+            "#################### #",
             "#                    #",
-            "#######################",
+            "######################",
         ],
         [
             "######################",
@@ -503,6 +505,12 @@ while running:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     player.switch_weapon()
+                if event.key == pygame.K_f and player.weapon == 'black_hole':
+                    # Create black hole at a range from the player
+                    black_hole_x = player.rect.centerx + player.direction[0] * 100
+                    black_hole_y = player.rect.centery + player.direction[1] * 100
+                    black_hole = BlackHole(black_hole_x, black_hole_y)
+                    black_holes.append(black_hole)
 
         keys = pygame.key.get_pressed()
         player.move(keys, walls, doors)
@@ -556,6 +564,12 @@ while running:
                 player.loot.append(loot.item_type)
                 loot_items.remove(loot)
 
+        # Update black holes
+        for black_hole in black_holes[:]:
+            black_hole.update(enemies)
+            if not black_hole.active:
+                black_holes.remove(black_hole)
+
         # Update bomb and check for transition
         if bomb.update(player):
             # Transition to the next dungeon
@@ -580,6 +594,8 @@ while running:
         for loot in loot_items:
             loot.draw(screen, camera)
         bomb.draw(screen, camera)
+        for black_hole in black_holes:
+            black_hole.draw(screen, camera)
 
         font = pygame.font.Font(None, 36)
         score_text = font.render(f'Score: {score}', True, (255, 255, 255))
