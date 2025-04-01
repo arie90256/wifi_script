@@ -92,7 +92,7 @@ class Player:
     def draw(self, surface, camera):
         pygame.draw.circle(surface, self.color, camera.apply_pos(self.rect.center), PLAYER_RADIUS)
         if self.sword_active and self.weapon == 'sword':
-            sword_rect = pygame.Rect(self.rect.centerx, self.rect.centery, 40, 10)
+            sword_rect = pygame.Rect(self.rect.centerx, self.rect.centery, 100, 10)
             pygame.draw.rect(surface, (255, 255, 255), camera.apply(sword_rect))
 
 # Bullet class
