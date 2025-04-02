@@ -276,10 +276,18 @@ class Player:
                 sword_y = self.rect.centery + self.direction[1] * sword_length
                 sword_rect = pygame.Rect(sword_x, sword_y, sword_length, sword_width)
                 pygame.draw.rect(surface, (255, 255, 255), camera.apply(sword_rect))
+                # Check collision with enemies and enemy dragon
+                for enemy in enemies[:]:
+                    if sword_rect.colliderect(enemy.rect):
+                        if isinstance(enemy, EnemyDragon):
+                            if enemy.take_damage(20):  # Apply 20 damage
+                                enemies.remove(enemy)
+                        else:
+                            if enemy.take_damage(20):  # Apply 20 damage
+                                enemies.remove(enemy)
             elif self.weapon == 'black_hole':
                 pygame.draw.circle(surface, (0, 0, 255), camera.apply_pos(self.rect.center), 55)  # Blue outline
                 pygame.draw.circle(surface, (0, 0, 0), camera.apply_pos(self.rect.center), 50)  # Black attack
-
 # Bullet class
 class Bullet:
     def __init__(self, x, y, angle):
@@ -333,7 +341,7 @@ class Enemy:
         self.speed = 1
         self.target = None
         self.loot = random.choice(['gold', 'silver', 'health_potion'])
-        self.sword_active = False
+        self.sword_active = True  # Give sword to all goblins
         self.direction = (0, 0)
         self.health = 50  # Add health attribute
 
@@ -384,7 +392,7 @@ class Enemy:
     def draw(self, surface, camera):
         surface.blit(self.image, camera.apply(self.rect))
         if self.sword_active:
-            sword_length = 1000
+            sword_length = 40
             sword_width = 10
             sword_x = self.rect.centerx + self.direction[0] * sword_length
             sword_y = self.rect.centery + self.direction[1] * sword_length
@@ -905,3 +913,4 @@ while running:
 
 pygame.quit()
 sys.exit()
+
