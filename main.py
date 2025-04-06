@@ -8,15 +8,15 @@ import time
 pygame.init()
 
 # Constants
-SCREEN_WIDTH = 1500
-SCREEN_HEIGHT = 1000
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 800
 MAP_WIDTH = 3000  # Adjusted map width
 MAP_HEIGHT = 2000  # Adjusted map height
 FPS = 60
-BOMB_RADIUS = 30
+BOMB_RADIUS = 100
 ENEMY_RADIUS = 20  # Updated to better fit the image size
 PLAYER_RADIUS = 25
-DRAGON_RADIUS = 50  # Increased size for the dragon
+DRAGON_RADIUS = 25  # Increased size for the dragon
 WALL_COLOR = (139, 69, 19)  # Brown color for walls
 DOOR_COLOR = (150, 75, 0)
 NUM_MAPS = 10  # Updated number of maps
@@ -241,7 +241,7 @@ class Player:
         if not self.is_dragon and self.cooldown <= 0:
             self.is_dragon = True
             self.transformation_time = time.time()
-            self.cooldown = 60 * FPS  # 1 minute cooldown converted to frames
+            self.cooldown = 20 * FPS  # 1 minute cooldown converted to frames
             self.dragon.rect.topleft = self.rect.topleft
             print(f"Transformed into dragon at {self.transformation_time}")
 
@@ -249,7 +249,7 @@ class Player:
         if self.is_dragon and time.time() - self.transformation_time >= 60:
             self.is_dragon = False
             self.rect.topleft = self.dragon.rect.topleft  # Update player's position to dragon's position
-            self.cooldown = 60 * FPS  # Cooldown starts after reverting
+            self.cooldown = 20 * FPS  # Cooldown starts after reverting
             print(f"Reverted to player at {time.time()}")
 
     def update_cooldown(self):
@@ -417,6 +417,7 @@ class EnemyDragon:
         self.image = pygame.transform.scale(dragon_image, (DRAGON_RADIUS * 2, DRAGON_RADIUS * 2))
         self.speed = 5  # Slower speed for enemy dragon
         self.health = 100
+        self.loot = random.choice(['gold', 'silver', 'health_potion'])
         self.fireballs = []
         self.direction = (0, 0)
 
@@ -582,7 +583,7 @@ def transition_to_next_map(current_map_index, player, enemy_positions):
             "#### #######      ####",
             "#             ###    #",
             "# ####### ##         #",
-            "#        ###     #####",
+            "#         ##     #####",
             "## ######  ####      #",
             "#         ##     #####",
             "# #############      #",
@@ -599,20 +600,27 @@ def transition_to_next_map(current_map_index, player, enemy_positions):
             "#################### #",
             "#                    #",
             "########### ##########",
+            "#                    #",
+            "#################### #",
+            "#                    #",
+            "########### ##########",
+            "#                    #",
+            "#################### #",
+            "#                    #",
+            "########### ##########",
+
         ],
         [
             "######################",
             "#       #######      #",
             "#       #            #",
             "#       #######      #",
-            "#             #      #",
+            "#                    #",
             "#       #######      #",
             "#       #            #",
             "#       #######      #",
             "##### ################",
-        ],
-        [
-            "######################",
+            "##### ################",
             "#         #          #",
             "# ############### ####",
             "#                    #",
@@ -621,6 +629,29 @@ def transition_to_next_map(current_map_index, player, enemy_positions):
             "########### ######## #",
             "#                    #",
             "### ##################",
+
+
+        ],
+        [
+            "##### ################",
+            "#         #          #",
+            "# ############### ####",
+            "#                    #",
+            "####### ########### ##",
+            "#                    #",
+            "########### ######## #",
+            "#                    #",
+            "###   ################",
+            "##### ################",
+            "#         #          #",
+            "# ############### ####",
+            "#                    #",
+            "####### ########### ##",
+            "#                    #",
+            "########### ######## #",
+            "#                    #",
+            "### ##################",
+
         ],
         [
             "######################",
@@ -653,7 +684,18 @@ def transition_to_next_map(current_map_index, player, enemy_positions):
             "#                    #",
             "### ######### ####### ",
             "#                    #",
-            "######################",
+            "############ #########",
+            "#          #   #     #",
+            "#### #######      ####",
+            "#             ###    #",
+            "# ####### ##         #",
+            "#         ##     #####",
+            "## ######  ####      #",
+            "#         ##     #####",
+            "# #############      #",
+            "#               #    #",
+            "################### ##"
+
         ],
         [
             "######################",
@@ -665,6 +707,17 @@ def transition_to_next_map(current_map_index, player, enemy_positions):
             "##### ###### #########",
             "#                    #",
             "################# ####",
+            "#          #   #     #",
+            "#### #######      ####",
+            "#             ###    #",
+            "# ####### ##         #",
+            "#         ##     #####",
+            "## ######  ####      #",
+            "#         ##     #####",
+            "# #############      #",
+            "#               #    #",
+            "################### ##"
+
         ],
         [
             "######################",
@@ -676,6 +729,17 @@ def transition_to_next_map(current_map_index, player, enemy_positions):
             "###### ###############",
             "#                    #",
             "######## #############",
+            "#          #   #     #",
+            "#### #######      ####",
+            "#             ###    #",
+            "# ####### ##         #",
+            "#         ##     #####",
+            "## ######  ####      #",
+            "#         ##     #####",
+            "# #############      #",
+            "#               #    #",
+            "################### ##"
+
         ],
         [
             "######################",
@@ -687,6 +751,18 @@ def transition_to_next_map(current_map_index, player, enemy_positions):
             "###### ###############",
             "#                    #",
             "################# ####",
+            "######################",
+            "#          #   #     #",
+            "#### #######      ####",
+            "#             ###    #",
+            "# ####### ##         #",
+            "#         ##     #####",
+            "## ######  ####      #",
+            "#         ##     #####",
+            "# #############      #",
+            "#               #    #",
+            "################### ##"
+
         ]
     ]
     walls, doors = generate_maze(structures[new_map_index])
@@ -730,10 +806,16 @@ def reset_game():
 player_start_x, player_start_y = 150, 150
 enemy_start_positions = [
     (1650, 1250),
+    (1500, 925),
+    (1400, 1400),
+    (1300, 1500),
+    (1450, 1300),
+    (1650, 925),
     (1500, 1300),
     (1400, 1400),
     (1300, 1500),
-    (1450, 1350)
+    (1450, 925)
+
 ]
 
 # Initialize selected menu option
@@ -913,4 +995,3 @@ while running:
 
 pygame.quit()
 sys.exit()
-
