@@ -43,7 +43,7 @@ strong_enemy_image = pygame.image.load("D:\\strong_goblin.png")  # Replace with 
 strong_enemy_image = pygame.transform.scale(strong_enemy_image, (ENEMY_RADIUS * 2, ENEMY_RADIUS * 2))  # Scale the image to the desired size
 
 # Load and scale the background image
-background_image = pygame.image.load("D:\\floor.png").convert()
+background_image = pygame.image.load("D:\\floor.png").convert()    # Replace with the actual path to your strong enemy image
 background_image = pygame.transform.scale(background_image, (MAP_WIDTH, MAP_HEIGHT))  # Scale the background image
 
 # Wall class
