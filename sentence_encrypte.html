@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentence Encryption</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent scrollbars */
+            background-color: black; /* Set background color */
+        }
+        h1 {
+            color: #00ff00; /* Matrix green */
+            position: relative;
+            z-index: 1; /* Ensure text is above the rain */
+        }
+        textarea {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%; /* Keep it full width */
+            max-width: 600px; /* Increase max-width for longer sentences */
+            height: 100px; /* Set height for better visibility */
+            resize: none; /* Prevent resizing */
+            position: relative;
+            z-index: 1; /* Ensure inputs are above the rain */
+        }
+        input[type="number"], button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            max-width: 300px;
+            position: relative;
+            z-index: 1; /* Ensure inputs are above the rain */
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #matrix {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Ensure rain is behind everything */
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+    <h1>Sentence Encryption</h1>
+    <label for="inputTextEncrypt">Enter a sentence:</label>
+    <textarea id="inputTextEncrypt" required></textarea>
+    
+    <label for="shiftValue">Enter shift value (1-25):</label>
+    <input type="number" id="shiftValue" min="1" max="25" required>
+    
+    <button onclick="handleEncrypt()">Encrypt and Download</button>
+    <button onclick="resetFields()">Reset</button>
+    <button onclick="window.location.href='encrypt.html'">Go to encrypt Page</button>
+    <button onclick="window.location.href='decrypt.html'">Go to Decrypt Page</button> <!-- New button added -->
+
+    <script>
+        function caesarCipher(text, shift) {
+            return text.split('').map(char => {
+                if (/[a-z]/i.test(char)) {
+                    const code = char.charCodeAt(0);
+                    const base = char === char.toUpperCase() ? 65 : 97;
+                    return String.fromCharCode(((code - base + shift) % 26 + 26) % 26 + base);
+                }
+                return char; // Non-alphabetic characters remain unchanged
+            }).join('');
+        }
+
+        function handleEncrypt() {
+            const inputText = document.getElementById('inputTextEncrypt').value;
+            const shiftValue = parseInt(document.getElementById('shiftValue').value);
+
+            if (inputText.trim() === '') {
+                alert('Please enter a sentence to encrypt.');
+                return;
+            }
+
+            if (isNaN(shiftValue) || shiftValue < 1 || shiftValue > 25) {
+                alert('Please enter a valid shift value (1-25).');
+                return;
+            }
+
+            const encryptedText = caesarCipher(inputText, shiftValue);
+            downloadFile('encrypted.txt', encryptedText);
+        }
+
+        function downloadFile(fileName, content) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+        }
+
+        function resetFields() {
+            document.getElementById('inputTextEncrypt').value = '';
+            document.getElementById('shiftValue').value = '';
+        }
+
+                // Clear saved info on page load
+        window.onload = function() {
+            resetFields(); // Reset fields when the page loads
+        };
+
+        // Matrix Rain Effect
+        const canvas = document.getElementById('matrix');
+        const context = canvas.getContext('2d');
+        const columns = Math.floor(window.innerWidth / 20); // Adjust for character width
+        const drops = Array(columns).fill(1); // Initialize drop positions
+
+        // Set canvas size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        function drawMatrix() {
+            context.fillStyle = 'rgba(0, 0, 0, 0.05)'; // Background color with transparency
+            context.fillRect(0, 0, canvas.width, canvas.height); // Clear the canvas with a fading effect
+            context.fillStyle = '#00ff00'; // Matrix green color
+            context.font = '20px monospace'; // Font style for the rain effect
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = String.fromCharCode(Math.random() * 128); // Random character
+                context.fillText(text, i * 20, drops[i] * 20); // Draw the character
+
+                // Reset drop position if it reaches the bottom
+                if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0; // Reset drop position
+                }
+
+                drops[i]++; // Move the drop down
+            }
+        }
+
+        // Start the animation
+        setInterval(drawMatrix, 50); // Adjust the interval for speed
+
+        // Adjust canvas size on window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

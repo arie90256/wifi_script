@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacking Terminal Simulation</title>
+    <style>
+        body {
+            background-color: black;
+            color: green;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            height: 100vh;
+            margin: 0;
+        }
+        .terminal {
+            position: absolute;
+            width: 500px;
+            height: 400px;
+            border: 2px solid green;
+            padding: 10px;
+            box-shadow: 0 0 20px green;
+            overflow: auto;
+            display: none;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        .line {
+            white-space: pre;
+        }
+        .input-line {
+            color: green;
+            border-top: 1px solid green;
+            padding-top: 5px;
+            margin-top: 10px;
+        }
+        .stop-button {
+            background-color: green;
+            color: black;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            color: green;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const commands = [
+            { text: 'Initializing system...', color: 'green' },
+            { text: 'Connecting to server...', color: 'green' },
+            { text: 'Accessing database...', color: 'green' },
+            { text: 'Error: Connection failed!', color: 'red' },
+            { text: 'Retrying connection...', color: 'green' },
+            { text: 'Downloading files...', color: 'green' },
+            { text: 'Error: File not found!', color: 'red' },
+            { text: 'Executing payload...', color: 'green' },
+            { text: 'Warning: Intrusion detected!', color: 'red' },
+            { text: 'Bypassing security protocols...', color: 'green' },
+            { text: 'Access granted.', color: 'green' },
+            { text: 'Type "quit" to exit.', color: 'green' },
+            { text: 'Critical failure!', color: 'red' },
+            { text: 'System compromised!', color: 'red' }
+        ];
+
+        function createTerminal() {
+            const terminal = document.createElement('div');
+            terminal.className = 'terminal';
+            terminal.style.top = Math.random() * (window.innerHeight - 400) + 'px';
+            terminal.style.left = Math.random() * (window.innerWidth - 500) + 'px';
+            terminal.style.display = 'block';
+
+            const closeButton = document.createElement('button');
+            closeButton.className = 'close-button';
+            closeButton.textContent = 'x';
+            closeButton.onclick = function() {
+                window.location.href = 'talking.html'; // Redirect to government_dashboard.html
+            };
+            terminal.appendChild(closeButton);
+
+            const stopButton = document.createElement('button');
+            stopButton.className = 'stop-button';
+            stopButton.textContent = 'Stop Typing';
+            terminal.appendChild(stopButton);
+
+            document.body.appendChild(terminal);
+            typeCommands(terminal, stopButton);
+        }
+
+        function typeCommands(terminal, stopButton) {
+            let index = 0;
+            let typingInterval;
+
+            function typeLine() {
+                if (index < commands.length) {
+                    const command = commands[index];
+                    const line = document.createElement('div');
+                    line.className = 'line';
+                    line.style.color = command.color;
+                    terminal.appendChild(line);
+
+                    let charIndex = 0;
+                    typingInterval = setInterval(() => {
+                        if (charIndex < command.text.length) {
+                            line.textContent += command.text[charIndex];
+                            charIndex++;
+                        } else {
+                            clearInterval(typingInterval);
+                            index++;
+                            setTimeout(typeLine, 1000); // Wait 1 second before typing the next command
+                        }
+                    }, 100); // Typing speed
+                } else {
+                    // Add input line for user command
+                    const inputLine = document.createElement('div');
+                                        inputLine.className = 'input-line';
+                    inputLine.contentEditable = true;
+                    terminal.appendChild(inputLine);
+                    inputLine.focus(); // Focus on the input line for user input
+
+                    // Add event listener for Enter key
+                    inputLine.addEventListener('keydown', function(event) {
+                        if (event.key === 'Enter') {
+                            event.preventDefault(); // Prevent the default action (new line)
+                            const userInput = inputLine.textContent.trim();
+                            if (userInput === 'quit') {
+                                window.location.href = 'zeus.html'; // Redirect to zeus.html
+                            } else {
+                                const errorLine = document.createElement('div');
+                                errorLine.className = 'line';
+                                errorLine.style.color = 'red';
+                                errorLine.textContent = 'Command not recognized: ' + userInput;
+                                terminal.appendChild(errorLine);
+                            }
+                            inputLine.textContent = ''; // Clear input line
+                            inputLine.focus(); // Refocus on the input line
+                        }
+                    });
+                }
+            }
+
+            stopButton.addEventListener('click', () => {
+                clearInterval(typingInterval); // Stop typing
+                const inputLine = document.createElement('div');
+                inputLine.className = 'input-line';
+                inputLine.contentEditable = true;
+                terminal.appendChild(inputLine);
+                inputLine.focus(); // Focus on the input line for user input
+            });
+
+            typeLine();
+        }
+
+        // Disable right-click context menu
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+        });
+
+        setInterval(createTerminal, 5000); // Create a new terminal every 5 seconds
+    </script>
+</body>
+</html>
+

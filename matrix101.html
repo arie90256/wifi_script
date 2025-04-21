@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Rain - 1s and 0s</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            color: #0F0; /* Green color for the text */
+            font-family: monospace;
+            font-size: 16px;
+        }
+        .matrix {
+            position: absolute;
+            white-space: nowrap;
+            pointer-events: none; /* Prevent mouse events on the rain */
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        // Disable right-click context menu
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+        });
+
+        const characters = '01'; // Only 1s and 0s
+        const matrixColumns = Math.floor(window.innerWidth / 20); // Number of columns based on screen width
+        const drops = Array.from({ length: matrixColumns }).fill(1); // Initialize drops
+
+        function createMatrixRain() {
+            const matrixContainer = document.createElement('div');
+            matrixContainer.className = 'matrix';
+            document.body.appendChild(matrixContainer);
+
+            for (let i = 0; i < matrixColumns; i++) {
+                const span = document.createElement('span');
+                span.style.position = 'absolute';
+                span.style.left = `${i * 20}px`;
+                span.style.top = `${Math.random() * window.innerHeight}px`;
+                span.textContent = characters.charAt(Math.floor(Math.random() * characters.length));
+                matrixContainer.appendChild(span);
+                animateDrop(span, i);
+            }
+        }
+
+        function animateDrop(span, index) {
+            const fallSpeed = Math.random() * 5 + 2; // Random fall speed
+            function fall() {
+                const top = parseFloat(span.style.top);
+                if (top > window.innerHeight) {
+                    span.style.top = '0px'; // Reset to top
+                } else {
+                    span.style.top = `${top + fallSpeed}px`; // Move down
+                }
+                span.textContent = characters.charAt(Math.floor(Math.random() * characters.length)); // Randomly change between 1 and 0
+                requestAnimationFrame(fall);
+            }
+            fall();
+        }
+
+        createMatrixRain();
+    </script>
+
+</body>
+</html>

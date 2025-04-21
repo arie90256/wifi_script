@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center; /* Center align text */
+            margin: 20px; /* Add margin around the body */
+        }
+        video, img {
+            max-width: 100%; /* Make media responsive */
+            height: auto; /* Maintain aspect ratio */
+            margin: 10px 0; /* Add margin above and below media */
+        }
+        #noMediaMessage {
+            display: none; /* Hide the message by default */
+            color: red; /* Red color for the message */
+        }
+    </style>
+</head>
+<body>
+    <h1>Media Player</h1>
+    <input type="file" id="fileInput" accept="image/*,video/*" multiple> <!-- File input for images and videos -->
+    <div id="mediaContainer"></div> <!-- Container to display media -->
+    <div id="noMediaMessage">No media selected.</div> <!-- Message when no media is selected -->
+
+    <script>
+        const fileInput = document.getElementById('fileInput'); // Get the file input element
+        const mediaContainer = document.getElementById('mediaContainer'); // Get the media container
+        const noMediaMessage = document.getElementById('noMediaMessage'); // Get the no media message
+
+        fileInput.addEventListener('change', (event) => {
+            const files = event.target.files; // Get the selected files
+            mediaContainer.innerHTML = ''; // Clear previous media
+            noMediaMessage.style.display = 'none'; // Hide the no media message
+
+            if (files.length === 0) {
+                noMediaMessage.style.display = 'block'; // Show message if no files are selected
+                return; // Exit the function if no files
+            }
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i]; // Get each file
+                const url = URL.createObjectURL(file); // Create a URL for the file
+                const mediaElement = document.createElement(file.type.startsWith('video/') ? 'video' : 'img'); // Create video or img element
+
+                if (file.type.startsWith('video/')) {
+                    mediaElement.src = url; // Set the source for video
+                    mediaElement.controls = true; // Add controls for video playback
+                } else {
+                    mediaElement.src = url; // Set the source for image
+                }
+
+                mediaContainer.appendChild(mediaElement); // Append the media element to the container
+            }
+        });
+
+        // Disable right-click context menu
+        document.addEventListener('contextmenu', (event) => {
+            event.preventDefault(); // Prevent the default context menu from appearing
+        });
+    </script>
+</body>
+</html>

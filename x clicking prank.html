@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Press X Button to leave</title>
+    <style>
+        body {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #closeButton {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            color: white;
+            text-align: center;
+            line-height: 50px;
+            font-size: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="closeButton">X</div>
+
+    <script>
+        const closeButton = document.getElementById('closeButton');
+
+        // Disable right-click context menu
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+        });
+
+        // Function to move the button away from the mouse cursor
+        function moveButtonAway(mouseX, mouseY) {
+            const buttonRect = closeButton.getBoundingClientRect();
+            const buttonX = buttonRect.left + buttonRect.width / 2;
+            const buttonY = buttonRect.top + buttonRect.height / 2;
+
+            // Calculate the distance from the mouse to the button
+            const distanceX = buttonX - mouseX;
+            const distanceY = buttonY - mouseY;
+            const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+            // If the mouse is close enough, move the button
+            if (distance < 100) {
+                const moveX = (distanceX / distance) * 100; // Move away in the X direction
+                const moveY = (distanceY / distance) * 100; // Move away in the Y direction
+
+                // Set new position for the button
+                closeButton.style.left = `${Math.min(Math.max(0, buttonX + moveX), window.innerWidth - 50)}px`;
+                closeButton.style.top = `${Math.min(Math.max(0, buttonY + moveY), window.innerHeight - 50)}px`;
+            }
+        }
+
+        // Event listener for mouse movement
+        document.addEventListener('mousemove', (event) => {
+            moveButtonAway(event.clientX, event.clientY);
+        });
+
+        // Initial position of the button
+        closeButton.style.left = `${Math.random() * (window.innerWidth - 50)}px`;
+        closeButton.style.top = `${Math.random() * (window.innerHeight - 50)}px`;
+    </script>
+</body>
+</html>

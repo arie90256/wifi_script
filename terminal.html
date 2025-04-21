@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z.E.U.S. Classified Page</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1a1a1a;
+            color: #00ff00;
+            margin: 0;
+            padding: 0;
+            height: 100vh; /* Full height */
+            display: flex;
+            flex-direction: column; /* Stack children vertically */
+        }
+        .terminal {
+            background-color: #000;
+            color: #00ff00;
+            padding: 20px;
+            border: 1px solid #00ff00;
+            flex: 1; /* Take up half of the screen */
+            overflow-y: auto; /* Scrollable */
+            white-space: pre;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px); /* Adjust width to account for padding */
+            padding: 10px;
+            border: 1px solid #00ff00; /* Add border for visibility */
+            background-color: #1a1a1a;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            box-sizing: border-box; /* Ensure padding is included in width */
+            margin: 0; /* Remove margin */
+        }
+        input[type="text"]:focus {
+            outline: none; /* Remove outline on focus */
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal" id="terminal"></div>
+    <input type="text" id="command" placeholder="Type command..." onkeypress="checkCommand(event)" />
+
+    <script>
+        // Disable right-click context menu
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Event messages
+        const events = [
+            "Initializing Z.E.U.S. system...",
+            "Monitoring files and their position...",
+            "Warning: Severe virus.",
+            "Alert: Unusual temperature fluctuations in CPU.",
+            "Critical: Activity increasing in CPU.",
+            "Override sequence initiated...",
+            "System override in progress...",
+            "Warning: Unauthorized access detected!",
+            "Warning: Downloading payload!",
+            "Warning: Uploading payload!",
+            "Warning: System under attack!",
+            "Warning: System compromised!",
+            "Warning: Retrieving username and pass used to access the page!",
+            "Warning: System under pressure!",
+            "Warning: user configuration: Classified",
+            "Warning: user configuration:****************",
+            "Warning: password configuration: Classified",
+            "Warning: password configuration:*************",
+            "Warning: System files being uploaded",
+            "Warning: System files uploaded",
+            "Warning: System compromised. Plug your military-grade USB to destroy computer now.",
+        ];
+
+        let eventIndex = 0;
+
+        // Start the event sequence
+        function startEventSequence() {
+            const terminalElement = document.getElementById("terminal");
+            setInterval(() => {
+                if (eventIndex < events.length) {
+                    terminalElement.textContent += `> ${events[eventIndex]}\n`;
+                    terminalElement.scrollTop = terminalElement.scrollHeight; // Auto-scroll to the bottom
+                    eventIndex++;
+                } else {
+                    clearInterval(this);
+                }
+            }, 3000); // Change event every 3 seconds
+        }
+
+        // Check command input
+        function checkCommand(event) {
+            if (event.key === "Enter") {
+                const command = document.getElementById("command").value;
+                const terminalElement = document.getElementById("terminal");
+                terminalElement.textContent += `> ${command}\n`;
+                processCommand(command);
+                document.getElementById("command").value = ""; // Clear input
+                terminalElement.scrollTop = terminalElement.scrollHeight; // Auto-scroll to the bottom
+            }
+        }
+
+        // Process the command entered in the terminal
+        function processCommand(command) {
+            const terminalElement = document.getElementById("terminal");
+            switch (command.toLowerCase()) {
+                case "butt fuck me":
+                case "butt fuck me ":
+                case "stick it in":
+                case "stick it in ":
+                case "fuck me":
+                case "fuck me ":
+                case "i like it in the ass":
+                case "i like it in the ass ":
+                case "netsh wlan bypass system":
+                case "netsh wlan bypass system ":
+                case "hacker user":
+                case "hacker user ":
+                case "bypass":
+                case "bypass ":
+                case "anal sex":
+                case "anal sex ":
+                case "pornhub":
+                case "pornhub ":
+                case "jokes":
+                case "jokes ":
+                case "rip my ass":
+                case "rip my ass ":
+                case "destroy my ass":
+                case "destroy my ass ":
+                case "anal sex1":
+                case "anal sex1 ":
+                case "open":
+                case "open ":
+                case "stick it in":
+                case "stick it in ":
+                case "butt buddy":
+                case "butt buddy ":
+                case "kill":
+                case "kill ":
+                case "pygames":
+                case "pygames ":
+                case "nogame":
+                case "nogame ":
+                case "ill suck you off":
+                case "ill suck you off ":
+                case "batch":
+                case "batch ":
+                case "vbs scripts":
+                case "vbs scripts ":
+                case "big dicks only":
+                case "big dicks only ":
+                    terminalElement.textContent += "Bypassing system...\n";
+                    setTimeout(() => {
+                        terminalElement.textContent += "Bypass successful. All accounts overridden. Redirecting...\n";
+                        setTimeout(() => {
+                            window.location.href = "gov_dash2.html"; // Redirect to the new page
+                        }, 2000); // Wait for 2 seconds before redirecting
+                   
+                    }, 2000); // Simulate delay
+                    break;
+                case "help":
+                    terminalElement.textContent += "Available commands: netsh wlan bypass system, help\n";
+                    break;
+                default:
+                    terminalElement.textContent += "Command not recognized.\n";
+                    break;
+            }
+            terminalElement.scrollTop = terminalElement.scrollHeight; // Auto-scroll to the bottom
+        }
+
+        // Show the terminal and start the event sequence when the page loads
+        window.onload = function() {
+            startEventSequence();
+        };
+    </script>
+</body>
+</html>
+
+

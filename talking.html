@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Speech Example</title>
+    <style>
+        body {
+            background-color: black; /* Set background color to black */
+            color: green; /* Set text color to green */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh; /* Full height of the viewport */
+            margin: 0; /* Remove default margin */
+            padding: 20px; /* Add some padding */
+        }
+        h1, p {
+            margin: 0; /* Remove default margin for heading and paragraph */
+        }
+        #go-to-dashboard {
+            margin-top: auto; /* Push the button to the bottom */
+            padding: 10px 20px; /* Add some padding to the button */
+            background-color: green; /* Button background color */
+            color: black; /* Button text color */
+            border: none; /* Remove border */
+            cursor: pointer; /* Change cursor to pointer */
+        }
+        #go-to-dashboard:hover {
+            background-color: lightgreen; /* Change button color on hover */
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;"> <!-- Disable right-click -->
+    <h1>Text to Speech Example</h1>
+    <p>The sentence will be spoken repeatedly.</p>
+    <button id="well you wanted the surprise">Go to Government Dashboard</button>
+
+    <script>
+        const text = "FBI is sent to your location"; // Neutral message
+        const speech = new SpeechSynthesisUtterance(text);
+
+        // Function to speak the text
+        function speakText() {
+            window.speechSynthesis.speak(speech);
+        }
+
+        // Speak the text every 3 seconds (3000 milliseconds)
+        const speechInterval = setInterval(speakText, 5000);
+
+        // Redirect to government_dashboard.html when the button is clicked
+        document.getElementById('well you wanted the surprise').addEventListener('click', function() {
+            window.speechSynthesis.cancel(); // Stop speaking
+            clearInterval(speechInterval); // Clear the interval
+            window.location.href = 'terminal.html'; // Redirect
+        });
+    </script>
+</body>
+</html>
+

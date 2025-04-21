@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Reports and Access Control</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #000;
+            color: #00ff00;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        h1 {
+            text-align: center;
+            color: #ff0000;
+            margin-top: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            border: 1px solid #00ff00;
+            padding: 20px;
+            background-color: rgba(42, 42, 42, 0.8);
+            border-radius: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #aaaaaa;
+        }
+        a {
+            color: #00ff00;
+        }
+        .warning {
+            background-color: red;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            animation: flash 1s infinite;
+            margin-top: 20px;
+        }
+        @keyframes flash {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .matrix {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .matrix span {
+            color: #0F0;
+            white-space: nowrap;
+            font-family: monospace;
+            font-size: 20px;
+            position: absolute;
+            bottom: 100%;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;"> <!-- Disable right-click -->
+    <div class="matrix" id="matrix"></div>
+
+    <h1>View Reports</h1>
+    <div class="container">
+        <p>Here you can view the latest reports:</p>
+        <ul>
+            <li><a href="#">Report 1: Satellites are down</a></li>
+            <li><a href="#">Report 2: System failure in Dutch boy</a></li>
+            <li><a href="#">Report 3: Virus has been unreachable; Dutch boy unresponsive</a></li>
+        </ul>
+        <button onclick="goBack()">Back to Dashboard</button>
+        <div class="warning">
+            ⚠️ Warning: Unauthorized access will lead to legal action! Account under review ⚠️
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Classified - Do Not Distribute</p>
+    </div>
+
+    <script>
+        // Matrix rain effect
+        const matrixContainer = document.getElementById('matrix');
+        const characters = '0101110101101';
+        const fontSize = 15;
+        const columns = Math.floor(window.innerWidth / fontSize);
+
+        for (let i = 0; i < columns; i++) {
+            const span = document.createElement('span');
+            span.textContent = characters.charAt(Math.floor(Math.random() * characters.length));
+            span.style.left = `${i * fontSize}px`;
+            span.style.animationDuration = `${Math.random() * 2 + 3}s`;
+            matrixContainer.appendChild(span);
+        }
+
+        setInterval(() => {
+            const spans = matrixContainer.getElementsByTagName('span');
+            for (let i = 0; i < spans.length; i++) {
+                spans[i].textContent = characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+        }, 100);
+
+        function goBack() {
+            window.location.href = "government_dashboard.html"; // Redirect to the main dashboard
+        }
+    </script>
+</body>
+</html>

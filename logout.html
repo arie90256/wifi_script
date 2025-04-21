@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #000;
+            color: #00ff00;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        h1 {
+            color: #ff0000;
+        }
+        .container {
+            text-align: center;
+            border: 1px solid #00ff00;
+            padding: 20px;
+            background-color: rgba(42, 42, 42, 0.8);
+            border-radius: 10px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #aaaaaa;
+        }
+        a {
+            color: #00ff00;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Logged Out</h1>
+        <p>You have successfully logged out of the Government Dashboard.</p>
+        <p><a href="login.html">Click here to log in again</a></p>
+    </div>
+
+    <div class="footer">
+        <p>Classified - Do Not Distribute</p>
+    </div>
+
+    <script>
+        // Disable right-click context menu
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>

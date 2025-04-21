@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Rain with Bouncing Buttons</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            color: green;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .rain {
+            position: absolute;
+            white-space: nowrap;
+            color: green;
+            font-size: 20px;
+            pointer-events: none; /* Prevent interaction with rain */
+        }
+
+        .button {
+            position: absolute;
+            width: 100px;
+            height: 50px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .red {
+            background-color: red;
+        }
+
+        .green {
+            background-color: green;
+        }
+
+        .blue {
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+
+<div id="rainContainer"></div>
+
+<button class="button red" id="redButton">lastdash</button>
+<button class="button green" id="greenButton">firstdash</button>
+<button class="button blue" id="blueButton">2nd dash</button>
+
+<script>
+    // Disable right-click context menu
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // Matrix rain effect
+    const rainContainer = document.getElementById('rainContainer');
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const rainDrops = [];
+    const dropCount = 100; // Number of rain drops
+
+    function createRain() {
+        for (let i = 0; i < dropCount; i++) {
+            const drop = document.createElement('div');
+            drop.className = 'rain';
+            drop.textContent = characters.charAt(Math.floor(Math.random() * characters.length));
+            drop.style.left = Math.random() * window.innerWidth + 'px';
+            drop.style.top = Math.random() * window.innerHeight + 'px';
+            rainContainer.appendChild(drop);
+            rainDrops.push(drop);
+        }
+    }
+
+    function updateRain() {
+        rainDrops.forEach(drop => {
+            drop.style.top = (parseFloat(drop.style.top) + 5) + 'px';
+            if (parseFloat(drop.style.top) > window.innerHeight) {
+                drop.style.top = '0px';
+                drop.style.left = Math.random() * window.innerWidth + 'px';
+            }
+        });
+        requestAnimationFrame(updateRain);
+    }
+
+    createRain();
+    updateRain();
+
+    // Bouncing buttons
+    const buttons = document.querySelectorAll('.button');
+    buttons.forEach(button => {
+        let posX = Math.random() * (window.innerWidth - 100);
+        let posY = Math.random() * (window.innerHeight - 50);
+        let dirX = (Math.random() < 0.5 ? 1 : -1) * 2; // Random direction
+        let dirY = (Math.random() < 0.5 ? 1 : -1) * 2;
+
+        button.style.left = posX + 'px';
+        button.style.top = posY + 'px';
+
+        function moveButton() {
+            posX += dirX;
+            posY += dirY;
+
+            // Bounce off walls
+            if (posX <= 0 || posX >= window.innerWidth - 100) dirX *= -1;
+            if (posY <= 0 || posY >= window.innerHeight - 50) dirY *= -1;
+
+            button.style.left = posX + 'px';
+            button.style.top = posY + 'px';
+        }
+
+        function animateButtons() {
+            moveButton();
+            requestAnimationFrame(animateButtons);
+        }
+
+        animateButtons();
+
+        // Button click events
+        // Button click events
+        button.addEventListener('click', () => {
+            if (button.classList.contains('green')) {
+                window.location.href = 'government_dashboard.html';
+            } else if (button.classList.contains('red')) {
+                window.location.href = 'sad_dash.html';
+            } else if (button.classList.contains('blue')) {
+                window.location.href = 'gov_dash2.html';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
+
+

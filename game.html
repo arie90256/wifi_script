@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shooting Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+        canvas {
+            display: block;
+            margin: auto;
+            background-color: #222;
+        }
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 20px;
+        }
+        #restartButton {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background-color: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none; /* Hidden until game over */
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div id="score">Score: 0</div>
+    <button id="restartButton" onclick="goToMenu()">Back to Menu</button>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Player properties
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height - 50,
+            width: 30,
+            height: 30,
+            speed: 5,
+            color: 'green'
+        };
+
+        // Bullet properties
+        const bullets = [];
+        const bulletSpeed = 7;
+        let shooting = false;
+
+        // Enemy properties
+        const enemies = [];
+        const enemySpeed = 2;
+        const enemySpawnInterval = 2000; // milliseconds
+
+        // Game state
+        let keys = {};
+        let score = 0;
+        let gameActive = true; // Track if the game is active
+
+        // Handle key down and up events
+        window.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            if (e.key === ' ') {
+                shooting = true; // Start shooting when space is pressed
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+            if (e.key === ' ') {
+                shooting = false; // Stop shooting when space is released
+            }
+        });
+
+        // Function to spawn enemies
+        function spawnEnemy() {
+            if (!gameActive) return; // Prevent spawning if the game is over
+            const enemy = {
+                x: Math.random() * (canvas.width - 30),
+                y: 0,
+                width: 30,
+                height: 30,
+                color: 'red'
+            };
+            enemies.push(enemy);
+        }
+
+        // Game loop
+        function gameLoop() {
+            if (!gameActive) return; // Stop the game loop if the game is over
+
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Move player
+            if (keys['a'] && player.x > 0) {
+                player.x -= player.speed; // Move left
+            }
+            if (keys['d'] && player.x < canvas.width - player.width) {
+                player.x += player.speed; // Move right
+            }
+
+            // Draw player
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+
+            // Move and draw bullets
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                const bullet = bullets[i];
+                bullet.y -= bulletSpeed;
+                ctx.fillStyle = 'yellow';
+                ctx.fillRect(bullet.x, bullet.y, 5, 10);
+
+                // Remove bullet if it goes off screen
+                if (bullet.y < 0) {
+                    bullets.splice(i, 1);
+                }
+            }
+
+            // Move and draw enemies
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                const enemy = enemies[i];
+                enemy.y += enemySpeed;
+                ctx.fillStyle = enemy.color;
+                ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+
+                // Check for collision with player
+                if (enemy.y + enemy.height > player.y && enemy.x < player.x + player.width && enemy.x + enemy.width > player.x) {
+                    gameOver();
+                }
+
+                // Check for collision with bullets
+                for (let j = bullets.length - 1; j >= 0; j--) {
+                    if (bullets[j].y < enemy.y + enemy.height && bullets[j].x > enemy.x && bullets[j].x < enemy.x + enemy.width) {
+                        enemies.splice(i, 1); // Remove enemy
+                        bullets.splice(j, 1); // Remove bullet
+                        score++; // Increase score
+                        document.getElementById('score').textContent = 'Score: ' + score; // Update score display
+                        break;
+                    }
+                }
+
+                // Remove enemy if it goes off screen
+                if (enemy.y > canvas.height) {
+                    enemies.splice(i, 1);
+                }
+            }
+
+            // Request next frame
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Shoot bullet
+        function shootBullet() {
+            if (shooting) {
+                bullets.push({ x: player.x + player.width / 2 - 2.5, y: player.y });
+            }
+        }
+
+        // Game over function
+        function gameOver() {
+            gameActive = false; // Set game state to inactive
+            alert('Game Over! Your score: ' + score);
+            document.getElementById('restartButton').style.display = 'block'; // Show restart button
+            document.getElementById('score').style.display = 'none'; // Hide score display
+            // Stop the game loop
+            cancelAnimationFrame(gameLoop);
+        }
+
+        // Redirect to zeus.html
+        function goToMenu() {
+            window.location.href = 'zeus.html'; // Redirect to zeus.html
+        }
+
+        // Disable right-click context menu
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+        });
+
+        // Start the game
+        setInterval(spawnEnemy, enemySpawnInterval);
+        setInterval(shootBullet, 100); // Shoot every 100 milliseconds while space is held down
+        gameLoop();
+    </script>
+</body>
+</html>
+
