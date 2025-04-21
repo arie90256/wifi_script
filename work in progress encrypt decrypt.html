@@ -3,27 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password-Protected Encryption</title>
+    <title>Random Symbol-Based Encryption with Matrix Background</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            overflow: hidden;
+            overflow-y: auto; /* Enables scrolling */
             background-color: black;
             color: #00ff00;
         }
 
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-
-        textarea, button, input[type="file"], input[type="password"] {
+        textarea, button, input[type="file"] {
             margin: 10px 0;
             padding: 10px;
             width: 100%;
@@ -35,9 +26,8 @@
         }
 
         textarea {
-            height: 300px;
+            height: 200px;
             resize: none;
-            overflow-y: scroll;
         }
 
         button {
@@ -57,12 +47,18 @@
         .button-group button {
             margin: 5px;
         }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Ensure it is behind all other elements */
+        }
     </style>
     <script>
-        // Disable right-click
-        document.addEventListener('contextmenu', (e) => e.preventDefault());
-
-        // Matrix Rain Effect
+        // Matrix Rain Effect with Chinese and Japanese Characters
         window.onload = function () {
             const canvas = document.createElement('canvas');
             canvas.id = 'matrix';
@@ -72,8 +68,9 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
-            const chars = 'アリウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨワン漢字平仮名片仮名中国語日本語';
+            const chars = 'アリウエオカキクケコサシスセソタチツテト漢字平仮名片仮名中国語日本語';
             const matrix = chars.split('');
+
             const fontSize = 16;
             const columns = Math.floor(canvas.width / fontSize);
             const drops = Array(columns).fill(1);
@@ -81,160 +78,157 @@
             function draw() {
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
+
                 ctx.fillStyle = '#00ff00';
                 ctx.font = `${fontSize}px monospace`;
+
                 drops.forEach((y, x) => {
                     const text = matrix[Math.floor(Math.random() * matrix.length)];
                     ctx.fillText(text, x * fontSize, y * fontSize);
-                    if (y * fontSize > canvas.height && Math.random() > 0.975) drops[x] = 0;
+
+                    if (y * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[x] = 0;
+                    }
+
                     drops[x]++;
                 });
             }
 
             setInterval(draw, 50);
+
             window.addEventListener('resize', () => {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
             });
         };
 
-        // Helper to derive a key from a password
-        async function deriveKey(password, salt) {
-            const encoder = new TextEncoder();
-            const keyMaterial = await window.crypto.subtle.importKey(
-                'raw',
-                encoder.encode(password),
-                { name: 'PBKDF2' },
-                false,
-                ['deriveKey']
-            );
+        // Symbol-Based Encryption and Decryption
+        const symbolMap = {};
+        const reverseSymbolMap = {};
 
-            return window.crypto.subtle.deriveKey(
-                {
-                    name: 'PBKDF2',
-                    salt: encoder.encode(salt),
-                    iterations: 100000,
-                    hash: 'SHA-256',
-                },
-                keyMaterial,
-                { name: 'AES-GCM', length: 256 },
-                false,
-                ['encrypt', 'decrypt']
-            );
+        // Generate random mappings
+        function generateSymbolMap() {
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?';
+            const symbols = 'アリウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨワン漢字平仮名片仮名中国語日本語';
+            const shuffledSymbols = symbols.split('').sort(() => 0.5 - Math.random());
+
+            chars.split('').forEach((char, index) => {
+                symbolMap[char] = shuffledSymbols[index];
+                reverseSymbolMap[shuffledSymbols[index]] = char;
+            });
+        }
+        generateSymbolMap();
+
+        function encryptText(input) {
+            return input.split('').map(char => symbolMap[char] || char).join('');
         }
 
-        // Encrypt file using AES-GCM
-        async function encryptFile(fileData, password) {
-            const salt = crypto.getRandomValues(new Uint8Array(16)); // Random salt
-            const iv = crypto.getRandomValues(new Uint8Array(12));   // Random IV
-            const key = await deriveKey(password, salt);
-
-            const encrypted = await crypto.subtle.encrypt(
-                { name: 'AES-GCM', iv },
-                key,
-                fileData
-            );
-
-            // Return encrypted data as an object
-            return {
-                ciphertext: btoa(String.fromCharCode(...new Uint8Array(encrypted))),
-                iv: btoa(String.fromCharCode(...iv)),
-                salt: btoa(String.fromCharCode(...salt)),
-            };
+        function decryptText(input) {
+            return input.split('').map(char => reverseSymbolMap[char] || char).join('');
         }
 
-        // Decrypt file using AES-GCM
-        async function decryptFile(encryptedData, password) {
-            const { ciphertext, iv, salt } = encryptedData;
-            const key = await deriveKey(password, atob(salt));
-
-            const decrypted = await crypto.subtle.decrypt(
-                { name: 'AES-GCM', iv: new Uint8Array([...atob(iv)].map(c => c.charCodeAt(0))) },
-                key,
-                new Uint8Array([...atob(ciphertext)].map(c => c.charCodeAt(0)))
-            );
-
-            return decrypted; // Return decrypted ArrayBuffer
-        }
-
-        // Handle encryption
-        async function handleEncryptFile() {
-            const fileInput = document.getElementById('fileInputEncrypt');
-            const password = document.getElementById('passwordInputEncrypt').value;
-
-            if (!fileInput.files.length || !password) {
-                alert('Please select a file and provide a password.');
+        // Button Handlers
+        function handleEncrypt() {
+            const inputText = document.getElementById('inputText').value;
+            if (!inputText) {
+                alert('Please enter text to encrypt.');
                 return;
             }
-
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-
-            reader.onload = async function (event) {
-                const fileData = event.target.result; // ArrayBuffer for binary files
-                const encrypted = await encryptFile(fileData, password);
-
-                // Save encrypted data as a JSON file
-                const blob = new Blob([JSON.stringify(encrypted)], { type: 'application/json' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = `${file.name}.enc`; // Save with .enc extension
-                link.click();
-            };
-
-            reader.readAsArrayBuffer(file); // Read file as ArrayBuffer
+            const encrypted = encryptText(inputText);
+            document.getElementById('outputText').value = encrypted;
         }
 
-        // Handle decryption
-        async function handleDecryptFile() {
-            const fileInput = document.getElementById('fileInputDecrypt');
-            const password = document.getElementById('passwordInputDecrypt').value;
-
-            if (!fileInput.files.length || !password) {
-                alert('Please select a file and provide a password.');
+        function handleDecrypt() {
+            const encryptedText = document.getElementById('outputText').value;
+            if (!encryptedText) {
+                alert('Please enter text to decrypt.');
                 return;
             }
+            const decrypted = decryptText(encryptedText);
+            document.getElementById('decryptedText').value = decrypted;
+        }
 
-            const file = fileInput.files[0];
-            const reader = new FileReader();
+        function handleSaveOutput() {
+            const outputText = document.getElementById('outputText').value;
+            if (!outputText) {
+                alert('No encrypted text to save.');
+                return;
+            }
+            saveToFile(outputText, 'encrypted.txt');
+        }
 
-            reader.onload = async function (event) {
-                const encryptedData = JSON.parse(event.target.result);
+        function handleSaveDecrypted() {
+            const decryptedText = document.getElementById('decryptedText').value;
+            if (!decryptedText) {
+                alert('No decrypted text to save.');
+                return;
+            }
+            saveToFile(decryptedText, 'decrypted.txt');
+        }
 
-                try {
-                    const decrypted = await decryptFile(encryptedData, password);
+        function saveToFile(content, filename) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
 
-                    // Save decrypted file
-                    const blob = new Blob([decrypted], { type: 'application/octet-stream' });
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = file.name.replace('.enc', ''); // Restore original name
-                    link.click();
-                } catch (e) {
-                    alert('Decryption failed. Check your password.');
-                }
+        function handleLoadForEncryption() {
+            loadFile(content => {
+                document.getElementById('inputText').value = content;
+            });
+        }
+
+        function handleLoadForDecryption() {
+            loadFile(content => {
+                document.getElementById('outputText').value = content;
+            });
+        }
+
+        function loadFile(callback) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.txt';
+
+            input.onchange = (event) => {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                reader.onload = () => {
+                    callback(reader.result);
+                };
+                reader.readAsText(file);
             };
 
-            reader.readAsText(file); // Read file as text (JSON format)
+            input.click();
         }
     </script>
 </head>
 <body>
-    <h1>Password-Protected Encryption</h1>
+    <h1>Random Symbol-Based Encryption</h1>
+
     <!-- Encryption Section -->
-    <h2>Encrypt File</h2>
-    <input type="file" id="fileInputEncrypt">
-    <input type="password" id="passwordInputEncrypt" placeholder="Enter encryption password">
+    <h2>Encrypt Text</h2>
+    <textarea id="inputText" placeholder="Enter text to encrypt"></textarea>
     <div class="button-group">
-        <button onclick="handleEncryptFile()">Encrypt File</button>
+        <button onclick="handleEncrypt()">Encrypt</button>
+        <button onclick="handleLoadForEncryption()">Load File for Encryption</button>
+    </div>
+
+    <!-- Encrypted Output Section -->
+    <h2>Encrypted Text</h2>
+    <textarea id="outputText" placeholder="Encrypted text will appear here"></textarea>
+    <div class="button-group">
+        <button onclick="handleSaveOutput()">Save Encrypted Text</button>
     </div>
 
     <!-- Decryption Section -->
-    <h2>Decrypt File</h2>
-    <input type="file" id="fileInputDecrypt">
-    <input type="password" id="passwordInputDecrypt" placeholder="Enter decryption password">
+    <h2>Decrypt Text</h2>
+    <textarea id="decryptedText" placeholder="Decrypted text will appear here"></textarea>
     <div class="button-group">
-        <button onclick="handleDecryptFile()">Decrypt File</button>
+        <button onclick="handleDecrypt()">Decrypt</button>
+        <button onclick="handleLoadForDecryption()">Load File for Decryption</button>
+        <button onclick="handleSaveDecrypted()">Save Decrypted Text</button>
     </div>
 </body>
 </html>
