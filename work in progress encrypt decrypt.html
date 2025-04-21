@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Symbol-Based Encryption with Matrix Background</title>
+    <title>Symbol-Based Encryption with File Support</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            overflow-y: auto; /* Enables scrolling */
+            overflow-y: auto;
             background-color: black;
             color: #00ff00;
         }
@@ -47,125 +47,41 @@
         .button-group button {
             margin: 5px;
         }
-
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; /* Ensure it is behind all other elements */
-        }
     </style>
     <script>
-        // Matrix Rain Effect with Chinese and Japanese Characters
-        window.onload = function () {
-            const canvas = document.createElement('canvas');
-            canvas.id = 'matrix';
-            document.body.appendChild(canvas);
-
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            const chars = 'アリウエオカキクケコサシスセソタチツテト漢字平仮名片仮名中国語日本語';
-            const matrix = chars.split('');
-
-            const fontSize = 16;
-            const columns = Math.floor(canvas.width / fontSize);
-            const drops = Array(columns).fill(1);
-
-            function draw() {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                ctx.fillStyle = '#00ff00';
-                ctx.font = `${fontSize}px monospace`;
-
-                drops.forEach((y, x) => {
-                    const text = matrix[Math.floor(Math.random() * matrix.length)];
-                    ctx.fillText(text, x * fontSize, y * fontSize);
-
-                    if (y * fontSize > canvas.height && Math.random() > 0.975) {
-                        drops[x] = 0;
-                    }
-
-                    drops[x]++;
-                });
-            }
-
-            setInterval(draw, 50);
-
-            window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            });
+        // Predefined Mapping for Encryption/Decryption
+        const predefinedSymbolMap = {
+            'a': 'ア', 'b': 'リ', 'c': 'ウ', 'd': 'エ', 'e': 'オ',
+            'f': 'カ', 'g': 'キ', 'h': 'ク', 'i': 'ケ', 'j': 'コ',
+            'k': 'サ', 'l': 'シ', 'm': 'ス', 'n': 'セ', 'o': 'ソ',
+            'p': 'タ', 'q': 'チ', 'r': 'ツ', 's': 'テ', 't': 'ト',
+            'u': 'ナ', 'v': 'ニ', 'w': 'ヌ', 'x': 'ネ', 'y': 'ノ',
+            'z': 'ハ', 'A': 'ヒ', 'B': 'フ', 'C': 'ヘ', 'D': 'ホ',
+            'E': 'マ', 'F': 'ミ', 'G': 'ム', 'H': 'メ', 'I': 'モ',
+            'J': 'ヤ', 'K': 'ユ', 'L': 'ヨ', 'M': 'ワ', 'N': 'ン',
+            'O': '漢', 'P': '字', 'Q': '平', 'R': '仮', 'S': '名',
+            'T': '片', 'U': '仮', 'V': '名', 'W': '中', 'X': '国',
+            'Y': '語', 'Z': '日', '0': '本', '1': '語', '2': '。',
+            '3': '、', '4': '！', '5': '？', '6': '（', '7': '）',
+            '8': '「', '9': '」', ' ': '　', '.': '点', ',': '逗',
+            '!': '！', '?': '？'
         };
 
-        // Symbol-Based Encryption and Decryption
-        const symbolMap = {};
-        const reverseSymbolMap = {};
+        const reversePredefinedSymbolMap = Object.fromEntries(
+            Object.entries(predefinedSymbolMap).map(([key, value]) => [value, key])
+        );
 
-        // Generate random mappings
-        function generateSymbolMap() {
-            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?';
-            const symbols = 'アリウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨワン漢字平仮名片仮名中国語日本語';
-            const shuffledSymbols = symbols.split('').sort(() => 0.5 - Math.random());
-
-            chars.split('').forEach((char, index) => {
-                symbolMap[char] = shuffledSymbols[index];
-                reverseSymbolMap[shuffledSymbols[index]] = char;
-            });
-        }
-        generateSymbolMap();
-
-        function encryptText(input) {
-            return input.split('').map(char => symbolMap[char] || char).join('');
+        // Encryption Function
+        function encryptWithPredefinedMap(input) {
+            return input.split('').map(char => predefinedSymbolMap[char] || char).join('');
         }
 
-        function decryptText(input) {
-            return input.split('').map(char => reverseSymbolMap[char] || char).join('');
+        // Decryption Function
+        function decryptWithPredefinedMap(input) {
+            return input.split('').map(char => reversePredefinedSymbolMap[char] || char).join('');
         }
 
-        // Button Handlers
-        function handleEncrypt() {
-            const inputText = document.getElementById('inputText').value;
-            if (!inputText) {
-                alert('Please enter text to encrypt.');
-                return;
-            }
-            const encrypted = encryptText(inputText);
-            document.getElementById('outputText').value = encrypted;
-        }
-
-        function handleDecrypt() {
-            const encryptedText = document.getElementById('outputText').value;
-            if (!encryptedText) {
-                alert('Please enter text to decrypt.');
-                return;
-            }
-            const decrypted = decryptText(encryptedText);
-            document.getElementById('decryptedText').value = decrypted;
-        }
-
-        function handleSaveOutput() {
-            const outputText = document.getElementById('outputText').value;
-            if (!outputText) {
-                alert('No encrypted text to save.');
-                return;
-            }
-            saveToFile(outputText, 'encrypted.txt');
-        }
-
-        function handleSaveDecrypted() {
-            const decryptedText = document.getElementById('decryptedText').value;
-            if (!decryptedText) {
-                alert('No decrypted text to save.');
-                return;
-            }
-            saveToFile(decryptedText, 'decrypted.txt');
-        }
-
+        // File Save Function
         function saveToFile(content, filename) {
             const blob = new Blob([content], { type: 'text/plain' });
             const link = document.createElement('a');
@@ -174,18 +90,7 @@
             link.click();
         }
 
-        function handleLoadForEncryption() {
-            loadFile(content => {
-                document.getElementById('inputText').value = content;
-            });
-        }
-
-        function handleLoadForDecryption() {
-            loadFile(content => {
-                document.getElementById('outputText').value = content;
-            });
-        }
-
+        // File Load Function
         function loadFile(callback) {
             const input = document.createElement('input');
             input.type = 'file';
@@ -202,10 +107,63 @@
 
             input.click();
         }
+
+        // Button Handlers
+        function handleEncrypt() {
+            const inputText = document.getElementById('inputText').value;
+            if (!inputText) {
+                alert('Please enter text to encrypt.');
+                return;
+            }
+            const encrypted = encryptWithPredefinedMap(inputText);
+            document.getElementById('outputText').value = encrypted;
+        }
+
+        function handleDecrypt() {
+            const encryptedText = document.getElementById('outputText').value;
+            if (!encryptedText) {
+                alert('Please enter text to decrypt.');
+                return;
+            }
+            const decrypted = decryptWithPredefinedMap(encryptedText);
+            document.getElementById('decryptedText').value = decrypted;
+        }
+
+        function handleSaveEncrypted() {
+            const encryptedText = document.getElementById('outputText').value;
+            if (!encryptedText) {
+                alert('No encrypted text to save.');
+                return;
+            }
+            saveToFile(encryptedText, 'encrypted.txt');
+        }
+
+        function handleSaveDecrypted() {
+            const decryptedText = document.getElementById('decryptedText').value;
+            if (!decryptedText) {
+                alert('No decrypted text to save.');
+                return;
+            }
+            saveToFile(decryptedText, 'decrypted.txt');
+        }
+
+        function handleLoadForEncryption() {
+            loadFile((content) => {
+                const encrypted = encryptWithPredefinedMap(content);
+                document.getElementById('outputText').value = encrypted;
+            });
+        }
+
+        function handleLoadForDecryption() {
+            loadFile((content) => {
+                const decrypted = decryptWithPredefinedMap(content);
+                document.getElementById('decryptedText').value = decrypted;
+            });
+        }
     </script>
 </head>
 <body>
-    <h1>Random Symbol-Based Encryption</h1>
+    <h1>Symbol-Based Encryption with File Support</h1>
 
     <!-- Encryption Section -->
     <h2>Encrypt Text</h2>
@@ -219,7 +177,7 @@
     <h2>Encrypted Text</h2>
     <textarea id="outputText" placeholder="Encrypted text will appear here"></textarea>
     <div class="button-group">
-        <button onclick="handleSaveOutput()">Save Encrypted Text</button>
+        <button onclick="handleSaveEncrypted()">Save Encrypted Text</button>
     </div>
 
     <!-- Decryption Section -->
