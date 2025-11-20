@@ -1,18 +1,12 @@
-//can someone help me seperate the main.py code into multiple different .py scripts to make run smother my first pygame.
 
-//these are all crapier versions of what ive made personaly im not a hacker nor will be if anything im a script kitty still learning.
+//these are all crapier versions of what ive made personaly im not a hacker nor will be if anything im still learning.
 
 //bb.bat is matrix rain attempt
 This script is intended for educational purpose's only.
 
 //the vbsopener is for an atmega32u4 usb hid device that will open you script that you pick for you that has been put on a seprate usb and runs it.
-just switch the script destination to your usb and script 
+just switch the script destination to your usb and script  
 
-//Copy wifi.txt to an notepad save to an .vbs then change the drive letter in script to your coresponding drive.
-example E:\\ D:\\ are the most common, then change the fuckthis.txt to what ever.  
-
-//For the tool.bat copy the code to notepad save it as a bat file then downlaod the passlist.txt.
 
 //for the rest figure it out if you truly cant then ask me too.
 //Disclamer only use on devices you own i will not take any resposibility for what you have done as a individual becouse it's illegal and you can get up to 10 years!dont be an ski
-//Rem refrenced before stop being a skid (talkingsasquatch,youtube.com).it is not legal to use on devices you dont own.
