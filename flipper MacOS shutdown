@@ -1,0 +1,5 @@
+DELAY 1000
+GUI SPACE
+DELAY 500
+PRINT "shutdown -h now"
+ENTER
