@@ -1,0 +1,5 @@
+DELAY 1000
+GUI r
+DELAY 500
+PRINT "adb shell reboot -p"
+ENTER
