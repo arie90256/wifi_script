@@ -1,9 +1,11 @@
-//bb.bat is matrix rain attempt
-This script is intended for educational purpose's only.
+// matrix rain attempt
+//These script's are intended for educational purpose's only.
 
-//the vbsopener is for an atmega32u4 usb hid device that will open you script that you pick for you that has been put on a seprate usb and runs it.
-just switch the script destination to your usb and script  
+//the vbsopener is for an atmega32u4 usb hid device or micro usb that will open your script that has been put on a seprate usb and runs it.
+//just switch the script destination to your usb and script  
 
 
 //for the rest figure it out if you truly cant then ask me too.
-//Disclamer only use on devices you own i will not take any resposibility for what you have done as a individual becouse it's illegal and you can get up to 10 years!dont be an ski
+//Disclamer only use on devices you own, I will not take any resposibility for what you have done as a individual,it's illegal to run on devices you dont have consent to use.
+
+
