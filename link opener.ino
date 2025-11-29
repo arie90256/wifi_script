@@ -63,7 +63,7 @@ void searchDuckDuckGo() {
   Keyboard.release(KEY_LEFT_CTRL);
 
   // Type the pornhub URL
-  Keyboard.print("https://you link"); 
+  Keyboard.print("https://your link"); 
   delay(100); // Small delay before pressing enter
 
   // Press Enter to go to pornhub
